@@ -1,4 +1,4 @@
-import { GoogleCallbackParameters } from './../../../../node_modules/@types/passport-google-oauth20/index.d';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from "express"
 import httpStatus from "http-status-codes" 
 import { AuthServices } from "./auth.service"
@@ -9,19 +9,42 @@ import { setAuthCookie } from "../../utlis/setCookie"
 import { createUserToken } from '../../utlis/userTokens';
 import { envVars } from '../../config/env';
 import { JwtPayload } from 'jsonwebtoken';
+import passport from 'passport';
 
 const credentialsLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
-    const loginInfo = await AuthServices.credentialsLogin(req.body) 
-    
-    setAuthCookie(res, loginInfo)
+    // const loginInfo = await AuthServices.credentialsLogin(req.body) 
+    passport.authenticate("local", async(err: any, user: any, info: any)=>{
+
+        if (err) { 
+            return next(new AppError(401, err))
+        }
+         if (!user) { 
+            return next(new AppError(401, info.message))
+        }
+
+        const userTokens = await createUserToken(user)
+        const { password: pass, ...rest } = user.toObject()
+
+
+
+        setAuthCookie(res, userTokens)
 
     sentResponse(res, {
         success: true,
         statusCode: httpStatus.OK,
         message: "User Logged In Successfully",
-        data: loginInfo,
+        data:  {
+                accessToken: userTokens.accessToken,
+                refreshToken: userTokens.refreshToken,
+                user: rest
+
+            },
     })
+
+    })(req, res, next)
+    
+    
 })
 
 const getNewAccessToken = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
