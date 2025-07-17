@@ -1,4 +1,4 @@
-import { httpStatus } from 'http-status-codes';
+import  httpStatus  from 'http-status-codes';
 import { NextFunction, Request, Response } from "express"
 import AppError from "../errorHeapers/appError"
 import { verifyToken } from "../utlis/jwt"
