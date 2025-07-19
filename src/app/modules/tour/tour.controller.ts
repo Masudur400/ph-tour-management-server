@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { catchAsync } from '../../utlis/catchAsync';
 import { TourService } from './tour.service';
 import { sentResponse } from '../../utlis/sentResponse';
- 
+
 
 const createTour = catchAsync(async (req: Request, res: Response) => {
     const result = await TourService.createTour(req.body);

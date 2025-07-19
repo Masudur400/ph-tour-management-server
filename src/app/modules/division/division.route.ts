@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { validateRequest } from "../../middlewares/validateRequest";
-import { Role } from "../user/user.interface"; 
+import { Role } from "../user/user.interface";
 import { createDivisionSchema, updateDivisionSchema } from "./division.validation";
 import { DivisionController } from "./division.controller";
- 
+
 
 const router = Router()
 

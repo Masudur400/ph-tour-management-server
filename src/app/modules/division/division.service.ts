@@ -1,7 +1,7 @@
 import { IDivision } from "./division.interface";
 import { Division } from "./division.model";
 
- 
+
 
 const createDivision = async (payload: IDivision) => {
 

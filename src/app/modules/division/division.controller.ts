@@ -3,7 +3,7 @@ import { catchAsync } from "../../utlis/catchAsync";
 import { sentResponse } from "../../utlis/sentResponse";
 import { DivisionService } from "./division.service";
 
- 
+
 const createDivision = catchAsync(async (req: Request, res: Response) => {
     const result = await DivisionService.createDivision(req.body);
     sentResponse(res, {

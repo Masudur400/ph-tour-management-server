@@ -4,7 +4,7 @@ import { validateRequest } from "../../middlewares/validateRequest";
 import { Role } from "../user/user.interface";
 import { TourController } from "./tour.controller";
 import { createTourTypeZodSchema, createTourZodSchema, updateTourZodSchema } from "./tour.validation";
- 
+
 
 const router = express.Router();
 
