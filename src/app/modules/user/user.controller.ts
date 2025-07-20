@@ -3,10 +3,11 @@ import httpStatus from 'http-status-codes';
 import { userServices } from "./user.service";
 import { catchAsync } from "../../utlis/catchAsync";
 import { Request,Response,NextFunction,  } from 'express';
-import { sentResponse } from '../../utlis/sentResponse';
-import { verifyToken } from '../../utlis/jwt';
-import { envVars } from '../../config/env';
+import { sentResponse } from '../../utlis/sentResponse'; 
 import { JwtPayload } from 'jsonwebtoken';
+import { QueryBuilder } from '../../utlis/queryBuilder';
+import { User } from './user.model';
+import { userSearchableFields } from './userConstant';
 
 
 
@@ -54,24 +55,57 @@ const updateUser = catchAsync(async (req: Request, res: Response, next: NextFunc
 
 
 
-const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const result = await userServices.getAllUsers();
-    // res.status(httpStatus.OK).json({
-    //     success: true,
-    //     message: 'all users',
-    //     data: result
-    // });
+// const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+//     const result = await userServices.getAllUsers();
+//     // res.status(httpStatus.OK).json({
+//     //     success: true,
+//     //     message: 'all users',
+//     //     data: result
+//     // });
+//     sentResponse(res, {
+//         success: true,
+//         statusCode: httpStatus.OK,
+//         message: 'all users',
+//         data: result.data,
+//         meta: result.meta
+//     })
+// });
+
+const getAllUsers = async (query: Record<string, string>) => {
+
+    const queryBuilder = new QueryBuilder(User.find(), query)
+    const usersData = queryBuilder
+        .filter()
+        .search(userSearchableFields)
+        .sort()
+        .fields()
+        .paginate();
+
+    const [data, meta] = await Promise.all([
+        usersData.build(),
+        queryBuilder.getMeta()
+    ])
+
+    return {
+        data,
+        meta
+    }
+};
+
+const getSingleUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+    const result = await userServices.getSingleUser(id);
     sentResponse(res, {
         success: true,
-        statusCode: httpStatus.OK,
-        message: 'all users',
-        data: result.data,
-        meta: result.meta
+        statusCode: httpStatus.CREATED,
+        message: "User Retrieved Successfully",
+        data: result.data
     })
-});
+})
 
 export const UserControllers = {
     createUser,
     getAllUsers,
-    updateUser
+    updateUser,
+    getSingleUser
 }
