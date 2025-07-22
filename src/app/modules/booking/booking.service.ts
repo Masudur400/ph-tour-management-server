@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from "http-status-codes"; 
 import { Tour } from "../tour/tour.model";
@@ -7,16 +8,14 @@ import { Booking } from "./booking.model";
 import AppError from "../../errorHeapers/appError";
 import { Payment } from "../payment/payment.model";
 import { PAYMENT_STATUS } from "../payment/payment.interface";
+import { ISSLCommerz } from "../sslCommerz/sslCommerz.interface";
+import { SSLService } from "../sslCommerz/sslCommerz.service";
 
 const getTransactionId = () => {
     return `tran_${Date.now()}_${Math.floor(Math.random() * 1000)}`
 }
 
-/**
- * Duplicate DB Collections / replica
- * 
- * Relica DB -> [ Create Booking -> Create Payment ->  Update Booking -> Error] -> Real DB
- */
+ 
 
 const createBooking = async (payload: Partial<IBooking>, userId: string) => {
     const transactionId = getTransactionId()

@@ -5,6 +5,8 @@ import { Booking } from "../booking/booking.model";
 import { PAYMENT_STATUS } from "./payment.interface";
 import { Payment } from "./payment.model";
 import AppError from "../../errorHeapers/appError";
+import { ISSLCommerz } from "../sslCommerz/sslCommerz.interface";
+import { SSLService } from "../sslCommerz/sslCommerz.service";
 
 const initPayment = async (bookingId: string) => {
 
