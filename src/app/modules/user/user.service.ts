@@ -1,5 +1,5 @@
 import httpStatus from 'http-status-codes';
-import AppError from "../../errorHeapers/appError";
+import AppError from "../../errorHelpers/appError";
 import { IAuthProvider, IUser, Role } from "./user.interface";
 import { User } from "./user.model";
 import { envVars } from '../../config/env';

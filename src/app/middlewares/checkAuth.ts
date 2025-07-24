@@ -1,6 +1,6 @@
 import  httpStatus  from 'http-status-codes';
 import { NextFunction, Request, Response } from "express"
-import AppError from "../errorHeapers/appError"
+import AppError from "../errorHelpers/appError"
 import { verifyToken } from "../utlis/jwt"
 import { envVars } from "../config/env"
 import { JwtPayload } from "jsonwebtoken"

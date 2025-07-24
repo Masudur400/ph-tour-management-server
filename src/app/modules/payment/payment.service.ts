@@ -4,7 +4,7 @@ import { BOOKING_STATUS } from "../booking/booking.interface";
 import { Booking } from "../booking/booking.model";  
 import { PAYMENT_STATUS } from "./payment.interface";
 import { Payment } from "./payment.model";
-import AppError from "../../errorHeapers/appError";
+import AppError from "../../errorHelpers/appError";
 import { ISSLCommerz } from "../sslCommerz/sslCommerz.interface";
 import { SSLService } from "../sslCommerz/sslCommerz.service";
 

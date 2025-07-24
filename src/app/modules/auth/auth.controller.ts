@@ -4,7 +4,7 @@ import httpStatus from "http-status-codes"
 import { AuthServices } from "./auth.service"
 import { catchAsync } from "../../utlis/catchAsync"
 import { sentResponse } from "../../utlis/sentResponse"
-import AppError from "../../errorHeapers/appError"
+import AppError from "../../errorHelpers/appError"
 import { setAuthCookie } from "../../utlis/setCookie"
 import { createUserToken } from '../../utlis/userTokens';
 import { envVars } from '../../config/env';

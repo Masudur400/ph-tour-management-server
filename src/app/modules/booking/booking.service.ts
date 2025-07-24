@@ -5,7 +5,7 @@ import { Tour } from "../tour/tour.model";
 import { User } from "../user/user.model";
 import { BOOKING_STATUS, IBooking } from "./booking.interface";
 import { Booking } from "./booking.model";
-import AppError from "../../errorHeapers/appError";
+import AppError from "../../errorHelpers/appError";
 import { Payment } from "../payment/payment.model";
 import { PAYMENT_STATUS } from "../payment/payment.interface";
 import { ISSLCommerz } from "../sslCommerz/sslCommerz.interface";

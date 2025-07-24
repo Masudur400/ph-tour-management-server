@@ -1,6 +1,6 @@
 import httpStatus  from 'http-status-codes';
 import { envVars } from "../config/env";
-import AppError from "../errorHeapers/appError";
+import AppError from "../errorHelpers/appError";
 import { IsActive, IUser } from "../modules/user/user.interface";
 import { User } from "../modules/user/user.model";
 import { generateToken, verifyToken } from "./jwt";
