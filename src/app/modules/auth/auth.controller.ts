@@ -11,40 +11,76 @@ import { envVars } from '../../config/env';
 import { JwtPayload } from 'jsonwebtoken';
 import passport from 'passport';
 
-const credentialsLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+// const credentialsLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
-    // const loginInfo = await AuthServices.credentialsLogin(req.body) 
-    passport.authenticate("local", async(err: any, user: any, info: any)=>{
+//     // const loginInfo = await AuthServices.credentialsLogin(req.body) 
+//     passport.authenticate("local", async(err: any, user: any, info: any)=>{
+
+//         if (err) { 
+//             return next(new AppError(401, err))
+//         }
+//          if (!user) { 
+//             return next(new AppError(401, info.message))
+//         }
+
+//         const userTokens = await createUserToken(user)
+//         const { password: pass, ...rest } = user.toObject()
+
+
+
+//         setAuthCookie(res, userTokens)
+
+//     sentResponse(res, {
+//         success: true,
+//         statusCode: httpStatus.OK,
+//         message: "User Logged In Successfully",
+//         data:  {
+//                 accessToken: userTokens.accessToken,
+//                 refreshToken: userTokens.refreshToken,
+//                 user: rest
+
+//             },
+//     })
+
+//     })(req, res, next)
+    
+    
+// })
+
+const credentialsLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    // const loginInfo = await AuthServices.credentialsLogin(req.body)
+
+    passport.authenticate("local", async (err: any, user: any, info: any) => {
 
         if (err) { 
             return next(new AppError(401, err))
         }
-         if (!user) { 
+
+        if (!user) { 
             return next(new AppError(401, info.message))
         }
 
         const userTokens = await createUserToken(user)
-        const { password: pass, ...rest } = user.toObject()
 
+        // delete user.toObject().password
+
+        const { password: pass, ...rest } = user.toObject()
 
 
         setAuthCookie(res, userTokens)
 
-    sentResponse(res, {
-        success: true,
-        statusCode: httpStatus.OK,
-        message: "User Logged In Successfully",
-        data:  {
+        sentResponse(res, {
+            success: true,
+            statusCode: httpStatus.OK,
+            message: "User Logged In Successfully",
+            data: {
                 accessToken: userTokens.accessToken,
                 refreshToken: userTokens.refreshToken,
                 user: rest
 
             },
-    })
-
-    })(req, res, next)
-    
-    
+        })
+    })(req, res, next)   
 })
 
 const getNewAccessToken = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -88,6 +124,21 @@ const logout = catchAsync(async (req: Request, res: Response, next: NextFunction
 })
 
 
+const changePassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+      
+     const newPassword = req.body.newPassword
+     const oldPassword = req.body.oldPassword
+     const decodedToken = req.user
+      await AuthServices.resetPassword(oldPassword, newPassword, decodedToken as JwtPayload)
+
+    sentResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "reset password Successfully",
+        data: null,
+    })
+})
 const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
       
@@ -134,13 +185,48 @@ const googleCallbackController = catchAsync(async (req: Request, res: Response, 
 })
 
 
+const setPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    const decodedToken = req.user as JwtPayload
+    const { password } = req.body;
+
+    await AuthServices.setPassword(decodedToken.userId, password);
+
+    sentResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "Password Changed Successfully",
+        data: null,
+    })
+})
+
+
+const forgotPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+
+    const { email } = req.body;
+
+    await AuthServices.forgotPassword(email);
+
+    sentResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "Email Sent Successfully",
+        data: null,
+    })
+})
+
+
 
 
 export const AuthControllers = {
     credentialsLogin,
     getNewAccessToken,
     logout,
+    changePassword,
     resetPassword,
+    setPassword,
+    forgotPassword,
     googleCallbackController
     
 }

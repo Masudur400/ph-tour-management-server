@@ -1,18 +1,19 @@
-import { Response } from "express"
-
-
+import { Response } from "express";
 
 interface TMeta {
+    page: number;
+    limit: number;
+    totalPage: number;
     total: number
 }
 
-interface TResponse<T> {
-    statusCode: number
-    success: boolean
-    message: string
-    data: T
-    meta?: TMeta
 
+interface TResponse<T> {
+    statusCode: number;
+    success: boolean;
+    message: string;
+    data: T;
+    meta?: TMeta
 }
 
 export const sentResponse = <T>(res: Response, data: TResponse<T>) => {
@@ -21,6 +22,6 @@ export const sentResponse = <T>(res: Response, data: TResponse<T>) => {
         success: data.success,
         message: data.message,
         meta: data.meta,
-        data:data.data
+        data: data.data
     })
 }

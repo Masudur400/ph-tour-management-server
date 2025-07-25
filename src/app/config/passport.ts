@@ -5,7 +5,7 @@ import passport from "passport";
 import { Strategy as GoogleStrategy, Profile, VerifyCallback } from "passport-google-oauth20";
 import { envVars } from "./env";
 import { User } from "../modules/user/user.model";
-import { Role } from "../modules/user/user.interface";
+import { IsActive, Role } from "../modules/user/user.interface";
 import { Strategy as LocalStrategy } from "passport-local";
 
 
@@ -29,6 +29,20 @@ passport.use(
 
             if (!isUserExist) {
                 return done("User does not exist")
+            }
+
+             if (!isUserExist.isVerified) {
+                // throw new AppError(httpStatus.BAD_REQUEST, "User is not verified")
+                return done("User is not verified")
+            }
+
+            if (isUserExist.isActive === IsActive.BLOCKED || isUserExist.isActive === IsActive.INACTIVE) {
+                // throw new AppError(httpStatus.BAD_REQUEST, `User is ${isUserExist.isActive}`)
+                return done(`User is ${isUserExist.isActive}`)
+            }
+            if (isUserExist.isDeleted) {
+                // throw new AppError(httpStatus.BAD_REQUEST, "User is deleted")
+                return done("User is deleted")
             }
 
             const isGoogleAuthenticated = isUserExist.auths.some(providerObjects => providerObjects.provider == "google")
@@ -63,21 +77,35 @@ passport.use(
         {
             clientID: envVars.GOOGLE_CLIENT_ID,
             clientSecret: envVars.GOOGLE_CLIENT_SECRET,
-            callbackURL: envVars.GOOGLE_CALLBACK_URL,
-        },
-        async (accessToken: string, refreshToken: string, profile: Profile, done: VerifyCallback) => {
-            try {
+            callbackURL: envVars.GOOGLE_CALLBACK_URL
+        }, async (accessToken: string, refreshToken: string, profile: Profile, done: VerifyCallback) => {
 
-                const email = profile.emails?.[0].value
+            try {
+                const email = profile.emails?.[0].value;
 
                 if (!email) {
-                    return done(null, false, { message: 'no email found' })
+                    return done(null, false, { mesaage: "No email found" })
                 }
 
-                let user = await User.findOne({ email })
+                let isUserExist = await User.findOne({ email })
+                if (isUserExist && !isUserExist.isVerified) {
+                    // throw new AppError(httpStatus.BAD_REQUEST, "User is not verified")
+                    // done("User is not verified")
+                    return done(null, false, { message: "User is not verified" })
+                }
 
-                if (!user) {
-                    user = await User.create({
+                if (isUserExist && (isUserExist.isActive === IsActive.BLOCKED || isUserExist.isActive === IsActive.INACTIVE)) {
+                    // throw new AppError(httpStatus.BAD_REQUEST, `User is ${isUserExist.isActive}`)
+                    done(`User is ${isUserExist.isActive}`)
+                }
+
+                if (isUserExist && isUserExist.isDeleted) {
+                    return done(null, false, { message: "User is deleted" })
+                    // done("User is deleted")
+                }
+
+                if (!isUserExist) {
+                    isUserExist = await User.create({
                         email,
                         name: profile.displayName,
                         picture: profile.photos?.[0].value,
@@ -85,17 +113,18 @@ passport.use(
                         isVerified: true,
                         auths: [
                             {
-                                provider: 'google',
-                                providerId: profile.id,
+                                provider: "google",
+                                providerId: profile.id
                             }
                         ]
                     })
                 }
 
-                return done(null, user)
+                return done(null, isUserExist)
 
-            } catch (error) { 
-                console.log('google strategy error', error);
+
+            } catch (error) {
+                console.log("Google Strategy Error", error);
                 return done(error)
             }
         }
