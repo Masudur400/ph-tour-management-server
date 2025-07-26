@@ -1,8 +1,10 @@
-// controllers/stats.controller.ts
-import { Request, Response } from "express"; 
+// controllers/stats.controller.ts  
+
+import { Request, Response } from "express";
 import { catchAsync } from "../../utlis/catchAsync";
-import { sentResponse } from "../../utlis/sentResponse";
 import { StatsService } from "./stats.service";
+import { sentResponse } from "../../utlis/sentResponse";
+
 
 const getBookingStats = catchAsync(async (req: Request, res: Response) => {
     const stats = await StatsService.getBookingStats();
@@ -12,7 +14,7 @@ const getBookingStats = catchAsync(async (req: Request, res: Response) => {
         message: "Booking stats fetched successfully",
         data: stats,
     });
-});
+});  
 
 const getPaymentStats = catchAsync(async (req: Request, res: Response) => {
     const stats = await StatsService.getPaymentStats();
