@@ -1,6 +1,7 @@
 import express from "express";
 import { PaymentController } from "./payment.controller";
 import { Role } from "../user/user.interface";
+import { checkAuth } from "../../middlewares/checkAuth";
 
 
 const router = express.Router();
