@@ -30,7 +30,7 @@ export interface IUser {
     isDeleted?: string
     isActive?: IsActive
     isVerified?: boolean
-
+    createdAt?: Date
     role: Role
     auths: IAuthProvider[]
     bookings?: Types.ObjectId[]
